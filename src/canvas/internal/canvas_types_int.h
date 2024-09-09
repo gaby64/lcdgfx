@@ -33,7 +33,7 @@
 #elif defined(__AVR__)
 #else
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-static inline uint8_t pgm_read_byte(const void *ptr)
+static inline uint8_t lcd_pgmReadByte(const void *ptr)
 {
     return *((const uint8_t *)ptr);
 }

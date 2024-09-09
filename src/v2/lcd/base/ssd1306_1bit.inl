@@ -88,17 +88,17 @@ template <class I> void NanoDisplayOps1<I>::printFixed(lcdint_t xpos, lcdint_t y
                 uint8_t data;
                 if ( style == STYLE_NORMAL )
                 {
-                    data = pgm_read_byte(&char_info.glyph[0]);
+                    data = lcd_pgmReadByte(&char_info.glyph[0]);
                 }
                 else if ( style == STYLE_BOLD )
                 {
-                    uint8_t temp = pgm_read_byte(&char_info.glyph[0]);
+                    uint8_t temp = lcd_pgmReadByte(&char_info.glyph[0]);
                     data = temp | ldata;
                     ldata = temp;
                 }
                 else
                 {
-                    uint8_t temp = pgm_read_byte(&char_info.glyph[1]);
+                    uint8_t temp = lcd_pgmReadByte(&char_info.glyph[1]);
                     data = (temp & 0xF0) | ldata;
                     ldata = (temp & 0x0F);
                 }
@@ -217,17 +217,17 @@ void NanoDisplayOps1<I>::printFixed_oldStyle(uint8_t xpos, uint8_t y, const char
             uint8_t data;
             if ( style == STYLE_NORMAL )
             {
-                data = pgm_read_byte(&this->m_font->getPrimaryTable()[offset]);
+                data = lcd_pgmReadByte(&this->m_font->getPrimaryTable()[offset]);
             }
             else if ( style == STYLE_BOLD )
             {
-                uint8_t temp = pgm_read_byte(&this->m_font->getPrimaryTable()[offset]);
+                uint8_t temp = lcd_pgmReadByte(&this->m_font->getPrimaryTable()[offset]);
                 data = temp | ldata;
                 ldata = temp;
             }
             else
             {
-                uint8_t temp = pgm_read_byte(&this->m_font->getPrimaryTable()[offset + 1]);
+                uint8_t temp = lcd_pgmReadByte(&this->m_font->getPrimaryTable()[offset + 1]);
                 data = (temp & 0xF0) | ldata;
                 ldata = (temp & 0x0F);
             }
@@ -296,17 +296,17 @@ void NanoDisplayOps1<I>::printFixedN(lcdint_t xpos, lcdint_t y, const char *ch, 
                 uint8_t data;
                 if ( style == STYLE_NORMAL )
                 {
-                    data = pgm_read_byte(char_info.glyph);
+                    data = lcd_pgmReadByte(char_info.glyph);
                 }
                 else if ( style == STYLE_BOLD )
                 {
-                    uint8_t temp = pgm_read_byte(char_info.glyph);
+                    uint8_t temp = lcd_pgmReadByte(char_info.glyph);
                     data = temp | ldata;
                     ldata = temp;
                 }
                 else
                 {
-                    uint8_t temp = pgm_read_byte(char_info.glyph + 1);
+                    uint8_t temp = lcd_pgmReadByte(char_info.glyph + 1);
                     data = (temp & 0xF0) | ldata;
                     ldata = (temp & 0x0F);
                 }
@@ -452,7 +452,7 @@ void NanoDisplayOps1<I>::drawXBitmap(lcdint_t x, lcdint_t y, lcduint_t w, lcduin
             uint8_t data = 0;
             for ( uint8_t k = 0; k < 8; k++ )
             {
-                data |= (((pgm_read_byte(&bitmap[k * pitch]) >> bit) & 0x01) << k);
+                data |= (((lcd_pgmReadByte(&bitmap[k * pitch]) >> bit) & 0x01) << k);
             }
             this->m_intf.send(this->m_bgColor ^ data);
             bit++;
@@ -523,9 +523,9 @@ void NanoDisplayOps1<I>::drawBitmap1(lcdint_t x, lcdint_t y, lcduint_t w, lcduin
         {
             uint8_t data = 0;
             if ( mainFlag )
-                data |= (pgm_read_byte(bitmap) << offset);
+                data |= (lcd_pgmReadByte(bitmap) << offset);
             if ( complexFlag )
-                data |= (pgm_read_byte(bitmap - origin_width) >> (8 - offset));
+                data |= (lcd_pgmReadByte(bitmap - origin_width) >> (8 - offset));
             if (!this->m_color)
             {
                 data ^= 0x00;
@@ -592,9 +592,9 @@ void NanoDisplayOps1<I>::gfx_drawMonoBitmap(lcdint_t x, lcdint_t y, lcduint_t w,
         {
             uint8_t data = 0;
             if ( mainFlag )
-                data |= ((pgm_read_byte(buf) << offset) & color);
+                data |= ((lcd_pgmReadByte(buf) << offset) & color);
             if ( complexFlag )
-                data |= ((pgm_read_byte(buf - origin_width) >> (8 - offset)) & color);
+                data |= ((lcd_pgmReadByte(buf - origin_width) >> (8 - offset)) & color);
             buf++;
             this->m_intf.send(this->m_bgColor ^ data);
         }

@@ -48,6 +48,6 @@ void lodeRunnerLoadLevel(int level)
 {
     for(int i=0; i<B_WIDTH*14; i++)
     {
-        gameField[i] = pgm_read_byte(level1 + i);
+        gameField[i] = lcd_pgmReadByte(level1 + i);
     }
 }

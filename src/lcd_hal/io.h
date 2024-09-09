@@ -169,6 +169,71 @@ extern "C"
 #define lcd_random random
 #define lcd_randomSeed randomSeed
 
+#elif defined(PICO_BOARD)
+
+// Define GPIO levels
+#define LCD_LOW 0
+#define LCD_HIGH 1
+
+// Define GPIO modes
+#define LCD_GPIO_INPUT GPIO_IN
+#define LCD_GPIO_OUTPUT GPIO_OUT
+#define LCD_GPIO_INPUT_PULLUP 2
+#define LCD_GPIO_INPUT_PULLDOWN 3
+
+#define lcd_delay sleep_ms
+#define lcd_delayUs sleep_us
+#define lcd_attachInterrupt(pin, callback, mode) lcd_registerGpioEvent(pin, callback, NULL)
+
+#define lcd_random rand
+#define lcd_randomSeed srand
+
+// Define GPIO functions
+#define lcd_gpioRead gpio_get
+//#define lcd_gpioMode gpio_set_dir
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+void lcd_gpioMode(int pin, int mode);
+
+void lcd_gpioWrite(int pin, int level);
+
+void lcd_registerGpioEvent(int pin, gpio_irq_callback_t on_pin_change, void *arg);
+
+void lcd_unregisterGpioEvent(int pin);
+
+uint8_t lcd_pgmReadByte(const void *ptr);
+
+static inline uint32_t lcd_millis(void) {
+    return to_ms_since_boot(get_absolute_time());
+}
+
+static inline uint32_t lcd_micros(void) {
+    return to_us_since_boot(get_absolute_time());
+}
+
+static inline uint16_t lcd_adcRead(uint8_t gpio_pin) {
+    uint8_t adc_channel;
+    
+    // Map GPIO pins to ADC channels
+    switch (gpio_pin) {
+        case 26: adc_channel = 0; break; // GPIO 26 is ADC0
+        case 27: adc_channel = 1; break; // GPIO 27 is ADC1
+        case 28: adc_channel = 2; break; // GPIO 28 is ADC2
+        default:
+            // Invalid GPIO pin for ADC input
+            return 0;
+    }
+    adc_select_input(adc_channel);  // Select the ADC input channel
+    return adc_read();               // Read the ADC value
+}
+
+#ifdef __cplusplus
+}
+#endif
+
 #else
 
 /** Constant corresponds to low level of gpio pin */
@@ -504,7 +569,7 @@ public:
      * @param config i2c platform configuration. Refer to SPlatformI2cConfig.
      */
     explicit PlatformI2c(const SPlatformI2cConfig &config)
-        : PicoI2c(config.scl, config.sda, config.addr)
+        : PicoI2c(config.busId, config.scl, config.sda, config.addr, config.frequency)
     {
     }
 };

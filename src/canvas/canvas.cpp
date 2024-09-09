@@ -208,7 +208,7 @@ void NanoCanvasOps<BPP>::printFixedPgm(lcdint_t xpos, lcdint_t y, const char *ch
     m_cursorY = y;
     for ( ;; )
     {
-        char c = pgm_read_byte(ch);
+        char c = lcd_pgmReadByte(ch);
         if ( !c )
             break;
         write(c);
@@ -436,12 +436,12 @@ template <> void NanoCanvasOps<1>::drawBitmap1(lcdint_t x, lcdint_t y, lcduint_t
             uint8_t mask = 0;
             if ( mainFlag )
             {
-                data |= (pgm_read_byte(bitmap) << offs);
+                data |= (lcd_pgmReadByte(bitmap) << offs);
                 mask |= (0xFF << offs);
             }
             if ( complexFlag )
             {
-                data |= (pgm_read_byte(bitmap - origin_width) >> (8 - offs));
+                data |= (lcd_pgmReadByte(bitmap - origin_width) >> (8 - offs));
                 mask |= (0xFF >> (8 - offs));
             }
             if ( CANVAS_MODE_TRANSPARENT != (m_textMode & CANVAS_MODE_TRANSPARENT) )
@@ -656,7 +656,7 @@ void NanoCanvasOps<4>::drawBitmap1(lcdint_t xpos, lcdint_t ypos, lcduint_t w, lc
         {
             uint16_t src_addr1 = xb1 + x - x1 + ((yb1 + y - y1) / 8) * w;
             uint8_t src_bit1 = (yb1 + y - y1) & 0x07;
-            uint8_t data = pgm_read_byte(&bitmap[src_addr1]);
+            uint8_t data = lcd_pgmReadByte(&bitmap[src_addr1]);
             uint16_t addr = YADDR4(y) + x / 2;
             if ( data & (1 << src_bit1) )
             {
@@ -716,7 +716,7 @@ void NanoCanvasOps<4>::drawBitmap8(lcdint_t xpos, lcdint_t ypos, lcduint_t w, lc
         for ( lcdint_t x = x1; x <= x2; x++ )
         {
             uint16_t src_addr8 = xb1 + x - x1 + ((yb1 + y - y1)) * w;
-            uint8_t data = pgm_read_byte(&bitmap[src_addr8]);
+            uint8_t data = lcd_pgmReadByte(&bitmap[src_addr8]);
             uint16_t addr = YADDR4(y) + x / 2;
             if ( (data) || (!(m_textMode & CANVAS_MODE_TRANSPARENT)) )
             {
@@ -894,7 +894,7 @@ void NanoCanvasOps<8>::drawBitmap1(lcdint_t xpos, lcdint_t ypos, lcduint_t w, lc
     {
         for ( lcdint_t x = x1; x <= x2; x++ )
         {
-            uint8_t data = pgm_read_byte(bitmap);
+            uint8_t data = lcd_pgmReadByte(bitmap);
             uint16_t addr = YADDR8(y) + x;
             for ( uint8_t n = 0; n < __min(y2 - y + 1, 8); n++ )
             {
@@ -950,7 +950,7 @@ void NanoCanvasOps<8>::drawBitmap8(lcdint_t xpos, lcdint_t ypos, lcduint_t w, lc
     {
         for ( lcdint_t x = x1; x <= x2; x++ )
         {
-            uint8_t data = pgm_read_byte(bitmap);
+            uint8_t data = lcd_pgmReadByte(bitmap);
             if ( (data) || (!(m_textMode & CANVAS_MODE_TRANSPARENT)) )
             {
                 m_buf[YADDR8(y) + x] = data;
@@ -1132,7 +1132,7 @@ void NanoCanvasOps<16>::drawBitmap1(lcdint_t xpos, lcdint_t ypos, lcduint_t w, l
     {
         for ( lcdint_t x = x1; x <= x2; x++ )
         {
-            uint8_t data = pgm_read_byte(bitmap);
+            uint8_t data = lcd_pgmReadByte(bitmap);
             uint16_t addr = YADDR16(y) + (x << 1);
             for ( uint8_t n = 0; n < __min(y2 - y + 1, 8); n++ )
             {
@@ -1194,7 +1194,7 @@ void NanoCanvasOps<16>::drawBitmap8(lcdint_t xpos, lcdint_t ypos, lcduint_t w, l
     {
         for ( lcdint_t x = x1; x <= x2; x++ )
         {
-            uint8_t data = pgm_read_byte(bitmap);
+            uint8_t data = lcd_pgmReadByte(bitmap);
             if ( (data) || (!(m_textMode & CANVAS_MODE_TRANSPARENT)) )
             {
                 uint16_t color = (((uint16_t)data & 0b11100000) << 8) | (((uint16_t)data & 0b00011100) << 6) |
@@ -1245,8 +1245,8 @@ void NanoCanvasOps<16>::drawBitmap16(lcdint_t xpos, lcdint_t ypos, lcduint_t w, 
     {
         for ( lcdint_t x = x1; x <= x2; x++ )
         {
-            uint8_t data1 = pgm_read_byte(bitmap);
-            uint8_t data2 = pgm_read_byte(bitmap + 1);
+            uint8_t data1 = lcd_pgmReadByte(bitmap);
+            uint8_t data2 = lcd_pgmReadByte(bitmap + 1);
             if ( (data1 || data2) || (!(m_textMode & CANVAS_MODE_TRANSPARENT)) )
             {
                 m_buf[YADDR16(y) + (x << 1)] = data1;

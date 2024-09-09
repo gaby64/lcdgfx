@@ -153,7 +153,7 @@ void NanoDisplayOps4<I>::drawBitmap1(lcdint_t xpos, lcdint_t ypos, lcduint_t w, 
         uint8_t pixels = 0;
         for ( wx = xpos; wx < xpos + (lcdint_t)w; wx++ )
         {
-            uint8_t data = pgm_read_byte(bitmap);
+            uint8_t data = lcd_pgmReadByte(bitmap);
             uint8_t mask = (wx & 0x01) ? 0xF0 : 0x0F;
             if ( data & bit )
                 pixels |= color & mask;
@@ -192,7 +192,7 @@ void NanoDisplayOps4<I>::drawBitmap4(lcdint_t x, lcdint_t y, lcduint_t w, lcduin
         uint8_t data = 0;
         for ( lcdint_t _x = x; _x < x + w; _x++ )
         {
-            uint8_t bmp = pgm_read_byte(bitmap);
+            uint8_t bmp = lcd_pgmReadByte(bitmap);
             if ( (_x - x) & 1 )
                 bmp >>= 4;
             else
@@ -223,8 +223,8 @@ void NanoDisplayOps4<I>::drawBitmap8(lcdint_t x, lcdint_t y, lcduint_t w, lcduin
     uint32_t count = (w) * (h);
     while ( count > 1 )
     {
-        uint8_t data1 = pgm_read_byte(bitmap++);
-        uint8_t data2 = pgm_read_byte(bitmap++);
+        uint8_t data1 = lcd_pgmReadByte(bitmap++);
+        uint8_t data2 = lcd_pgmReadByte(bitmap++);
         this->m_intf.send(RGB8_TO_GRAY4(data1) | RGB8_TO_GRAY4(data2) << 4);
         count -= 2;
     }

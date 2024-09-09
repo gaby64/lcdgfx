@@ -266,7 +266,7 @@ void resetBlocks()
     {
         for (uint8_t j=0; j<BLOCK_NUM_ROWS; j++)
         {
-            gameField[j][i] = pgm_read_byte( &levels[level-1][j][i] );
+            gameField[j][i] = lcd_pgmReadByte( &levels[level-1][j][i] );
             if ((gameField[j][i]) && (gameField[j][i] != BLOCK_STRONG))
             {
                 blocksLeft++;

@@ -314,7 +314,7 @@ void loadLevel(void)
     {
         for (uint8_t j=0; j<BLOCK_NUM_ROWS; j++)
         {
-            uint8_t block = pgm_read_byte( &levels[g_level][j][i] );
+            uint8_t block = lcd_pgmReadByte( &levels[g_level][j][i] );
             gameState.battleField.blocks[j][i] = block;
             if (block)
             {

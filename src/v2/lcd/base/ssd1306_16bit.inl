@@ -69,7 +69,7 @@ void ssd1306_drawBitmap16(lcdint_t xpos, lcdint_t ypos, lcduint_t w, lcduint_t h
     uint32_t count = (w) * (h);
     while (count--)
     {
-        ssd1306_lcd.send_pixels16( (pgm_read_byte( &bitmap[0] ) << 8) | pgm_read_byte( &bitmap[1] ) );
+        ssd1306_lcd.send_pixels16( (lcd_pgmReadByte( &bitmap[0] ) << 8) | lcd_pgmReadByte( &bitmap[1] ) );
         bitmap += 2;
     }
     ssd1306_intf.stop();
@@ -252,7 +252,7 @@ void NanoDisplayOps16<I>::drawBitmap1(lcdint_t xpos, lcdint_t ypos, lcduint_t w,
         lcduint_t wx = w;
         while ( wx-- )
         {
-            uint8_t data = pgm_read_byte(bitmap);
+            uint8_t data = lcd_pgmReadByte(bitmap);
             if ( data & bit )
             {
                 this->m_intf.send(color >> 8);
@@ -291,7 +291,7 @@ void NanoDisplayOps16<I>::drawBitmap8(lcdint_t x, lcdint_t y, lcduint_t w, lcdui
     uint32_t count = (w) * (h);
     while ( count-- )
     {
-        uint16_t color = RGB8_TO_RGB16(pgm_read_byte(bitmap));
+        uint16_t color = RGB8_TO_RGB16(lcd_pgmReadByte(bitmap));
         this->m_intf.send(color >> 8);
         this->m_intf.send(color & 0xFF);
         bitmap++;
@@ -306,8 +306,8 @@ void NanoDisplayOps16<I>::drawBitmap16(lcdint_t x, lcdint_t y, lcduint_t w, lcdu
     uint32_t count = (w) * (h);
     while ( count-- )
     {
-        this->m_intf.send(pgm_read_byte(&bitmap[0]));
-        this->m_intf.send(pgm_read_byte(&bitmap[1]));
+        this->m_intf.send(lcd_pgmReadByte(&bitmap[0]));
+        this->m_intf.send(lcd_pgmReadByte(&bitmap[1]));
         bitmap += 2;
     }
     this->m_intf.endBlock();
@@ -518,17 +518,17 @@ void NanoDisplayOps16<I>::printFixedN(lcdint_t xpos, lcdint_t y, const char *ch,
                 uint8_t data;
                 if ( style == STYLE_NORMAL )
                 {
-                    data = pgm_read_byte(char_info.glyph);
+                    data = lcd_pgmReadByte(char_info.glyph);
                 }
                 else if ( style == STYLE_BOLD )
                 {
-                    uint8_t temp = pgm_read_byte(char_info.glyph);
+                    uint8_t temp = lcd_pgmReadByte(char_info.glyph);
                     data = temp | ldata;
                     ldata = temp;
                 }
                 else
                 {
-                    uint8_t temp = pgm_read_byte(char_info.glyph + 1);
+                    uint8_t temp = lcd_pgmReadByte(char_info.glyph + 1);
                     data = (temp & 0xF0) | ldata;
                     ldata = (temp & 0x0F);
                 }

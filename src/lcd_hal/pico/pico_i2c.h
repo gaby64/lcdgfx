@@ -26,13 +26,121 @@
  * @file hal/pico/pico_i2c.h LCDGFX Raspberry Pi Pico Dummy !!! Interface
  */
 
-// !!!!! WARNING !!!!!!
-// This is a dummy implementation that does not work !!!
-
 #pragma once
 
 
 #if defined(PICO_BOARD)
+#include "pico/stdlib.h"
+#include "hardware/i2c.h"
+
+// WIRE_HAS_END means Wire has end()
+#define WIRE_HAS_END 1
+
+#ifndef WIRE_BUFFER_SIZE
+#define WIRE_BUFFER_SIZE 256
+#endif
+
+#ifndef __WIRE0_DEVICE
+#define __WIRE0_DEVICE i2c0
+#endif
+#ifndef __WIRE1_DEVICE
+#define __WIRE1_DEVICE i2c1
+#endif
+
+template <size_t N>
+constexpr uint32_t __bitset(const int (&a)[N], size_t i = 0U) {
+    return i < N ? (1L << a[i]) | __bitset(a, i + 1) : 0;
+}
+
+
+class TwoWire {
+public:
+    TwoWire(i2c_inst_t *i2c, int8_t sda, int8_t scl);
+    ~TwoWire();
+
+    // Start as Master
+    void begin();
+    // Start as Slave
+    void begin(uint8_t address);
+    // Shut down the I2C interface
+    void end();
+
+    // Select IO pins to use.  Call before ::begin()
+    bool setSDA(int8_t sda);
+    bool setSCL(int8_t scl);
+
+    void setClock(uint32_t freqHz);
+
+    void beginTransmission(uint8_t);
+    uint8_t endTransmission(bool stopBit);
+    uint8_t endTransmission(void);
+
+    size_t requestFrom(uint8_t address, size_t quantity, bool stopBit);
+    size_t requestFrom(uint8_t address, size_t quantity);
+
+    size_t write(uint8_t data);
+    size_t write(const uint8_t * data, size_t quantity);
+
+    virtual int available(void);
+    virtual int read(void);
+    virtual int peek(void);
+    virtual void flush(void);
+    void onReceive(void(*)(int));
+    void onRequest(void(*)(void));
+
+    inline size_t write(unsigned long n) {
+        return write((uint8_t)n);
+    }
+    inline size_t write(long n) {
+        return write((uint8_t)n);
+    }
+    inline size_t write(unsigned int n) {
+        return write((uint8_t)n);
+    }
+    inline size_t write(int n) {
+        return write((uint8_t)n);
+    }
+
+    void setTimeout(uint32_t timeout = 25, bool reset_with_timeout = false);     // sets the maximum number of milliseconds to wait
+    bool getTimeoutFlag(void);
+    void clearTimeoutFlag(void);
+
+    // IRQ callback
+    void onIRQ();
+
+private:
+    i2c_inst_t *_i2c;
+    uint8_t _sda;
+    uint8_t _scl;
+    int _clkHz;
+
+    bool _running;
+    bool _slave;
+    uint8_t _addr;
+    bool _txBegun;
+
+    unsigned long _timeout = 1000; 
+    bool _timeoutFlag;
+    bool _reset_with_timeout;
+    void _handleTimeout(bool reset);
+
+    uint8_t _buff[WIRE_BUFFER_SIZE];
+    int _buffLen;
+    int _buffOff;
+
+    // Callback user functions
+    void (*_onRequestCallback)(void);
+    void (*_onReceiveCallback)(int);
+
+    bool _slaveStartDet = false;
+
+    // TWI clock frequency
+    static const uint32_t TWI_CLOCK = 100000;
+};
+
+extern TwoWire *Wire;
+extern TwoWire *Wire1;
+
 /**
  * Class implements i2c support via Wire library for Arduino platforms
  */
@@ -45,7 +153,7 @@ public:
      * @param sda data pin to use for i2c
      * @param sa i2c address of the device to control over i2c
      */
-    PicoI2c(int8_t scl = -1, int8_t sda = -1, uint8_t sa = 0x00);
+    PicoI2c(int8_t i2c_bus, int8_t scl = -1, int8_t sda = -1, uint8_t sa = 0x00, uint32_t freq = 0);
     ~PicoI2c();
 
     /**
@@ -97,11 +205,14 @@ public:
         m_sa = addr;
     }
 
+    i2c_inst_t* m_i2c;
+    uint8_t m_sa;
 private:
+    int8_t m_i2c_bus;
     int8_t m_scl;
     int8_t m_sda;
-    uint8_t m_sa;
     uint8_t m_mode;
+    uint32_t m_freq;
 };
 
 #endif

@@ -31,7 +31,7 @@ template <class I> void _configureSpiDisplay(I &intf, const uint8_t *config, uin
     intf.commandStart();
     for ( uint8_t i = 0; i < configSize; i++ )
     {
-        uint8_t data = pgm_read_byte(&config[i]);
+        uint8_t data = lcd_pgmReadByte(&config[i]);
         if ( command )
         {
             if ( command == CMD_DELAY )
@@ -88,7 +88,7 @@ template <class I> void _configureSpiDisplayCmdModeOnly(I &intf, const uint8_t *
     intf.commandStart();
     for ( uint8_t i = 0; i < configSize; i++ )
     {
-        uint8_t data = pgm_read_byte(&config[i]);
+        uint8_t data = lcd_pgmReadByte(&config[i]);
         if ( command )
         {
             if ( command == CMD_DELAY )

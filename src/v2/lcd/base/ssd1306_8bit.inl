@@ -175,7 +175,7 @@ void NanoDisplayOps8<I>::drawBitmap1(lcdint_t xpos, lcdint_t ypos, lcduint_t w, 
         lcduint_t wx = w;
         while ( wx-- )
         {
-            uint8_t data = pgm_read_byte(bitmap);
+            uint8_t data = lcd_pgmReadByte(bitmap);
             if ( data & bit )
                 this->m_intf.send(color);
             else
@@ -208,7 +208,7 @@ void NanoDisplayOps8<I>::drawBitmap8(lcdint_t x, lcdint_t y, lcduint_t w, lcduin
     uint32_t count = (w) * (h);
     while ( count-- )
     {
-        this->m_intf.send(pgm_read_byte(bitmap));
+        this->m_intf.send(lcd_pgmReadByte(bitmap));
         bitmap++;
     }
     this->m_intf.endBlock();

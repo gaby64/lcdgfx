@@ -36,3 +36,9 @@
 
 #include <string.h>
 #include <stdio.h>
+#include "hardware/irq.h"
+#include "hardware/gpio.h"
+#include "hardware/adc.h"
+#include "hardware/spi.h"
+#include "hardware/i2c.h"
+#include "pico/time.h"

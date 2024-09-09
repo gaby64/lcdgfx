@@ -85,17 +85,17 @@ uint8_t ssd1306_printFixed(uint8_t xpos, uint8_t y, const char *ch, EFontStyle s
                 uint8_t data;
                 if ( style == STYLE_NORMAL )
                 {
-                    data = pgm_read_byte(&char_info.glyph[0]);
+                    data = lcd_pgmReadByte(&char_info.glyph[0]);
                 }
                 else if ( style == STYLE_BOLD )
                 {
-                    uint8_t temp = pgm_read_byte(&char_info.glyph[0]);
+                    uint8_t temp = lcd_pgmReadByte(&char_info.glyph[0]);
                     data = temp | ldata;
                     ldata = temp;
                 }
                 else
                 {
-                    uint8_t temp = pgm_read_byte(&char_info.glyph[1]);
+                    uint8_t temp = lcd_pgmReadByte(&char_info.glyph[1]);
                     data = (temp & 0xF0) | ldata;
                     ldata = (temp & 0x0F);
                 }
@@ -164,17 +164,17 @@ uint8_t ssd1306_printFixed_oldStyle(uint8_t xpos, uint8_t y, const char *ch, EFo
             uint8_t data;
             if ( style == STYLE_NORMAL )
             {
-                data = pgm_read_byte(&s_fixedFont.primary_table[offset]);
+                data = lcd_pgmReadByte(&s_fixedFont.primary_table[offset]);
             }
             else if ( style == STYLE_BOLD )
             {
-                uint8_t temp = pgm_read_byte(&s_fixedFont.primary_table[offset]);
+                uint8_t temp = lcd_pgmReadByte(&s_fixedFont.primary_table[offset]);
                 data = temp | ldata;
                 ldata = temp;
             }
             else
             {
-                uint8_t temp = pgm_read_byte(&s_fixedFont.primary_table[offset + 1]);
+                uint8_t temp = lcd_pgmReadByte(&s_fixedFont.primary_table[offset + 1]);
                 data = (temp & 0xF0) | ldata;
                 ldata = (temp & 0x0F);
             }
@@ -238,17 +238,17 @@ uint8_t ssd1306_printFixed2x(uint8_t xpos, uint8_t y, const char ch[], EFontStyl
             uint8_t data;
             if ( style == STYLE_NORMAL )
             {
-                data = pgm_read_byte(&s_fixedFont.primary_table[offset]);
+                data = lcd_pgmReadByte(&s_fixedFont.primary_table[offset]);
             }
             else if ( style == STYLE_BOLD )
             {
-                uint8_t temp = pgm_read_byte(&s_fixedFont.primary_table[offset]);
+                uint8_t temp = lcd_pgmReadByte(&s_fixedFont.primary_table[offset]);
                 data = temp | ldata;
                 ldata = temp;
             }
             else
             {
-                uint8_t temp = pgm_read_byte(&s_fixedFont.primary_table[offset + 1]);
+                uint8_t temp = lcd_pgmReadByte(&s_fixedFont.primary_table[offset + 1]);
                 data = (temp & 0xF0) | ldata;
                 ldata = (temp & 0x0F);
             }
@@ -323,17 +323,17 @@ uint8_t ssd1306_printFixedN(uint8_t xpos, uint8_t y, const char ch[], EFontStyle
                 uint8_t data;
                 if ( style == STYLE_NORMAL )
                 {
-                    data = pgm_read_byte(char_info.glyph);
+                    data = lcd_pgmReadByte(char_info.glyph);
                 }
                 else if ( style == STYLE_BOLD )
                 {
-                    uint8_t temp = pgm_read_byte(char_info.glyph);
+                    uint8_t temp = lcd_pgmReadByte(char_info.glyph);
                     data = temp | ldata;
                     ldata = temp;
                 }
                 else
                 {
-                    uint8_t temp = pgm_read_byte(char_info.glyph+1);
+                    uint8_t temp = lcd_pgmReadByte(char_info.glyph+1);
                     data = (temp & 0xF0) | ldata;
                     ldata = (temp & 0x0F);
                 }
@@ -491,8 +491,8 @@ void gfx_drawMonoBitmap(lcdint_t x, lcdint_t y, lcduint_t w, lcduint_t h, const 
         for( i=w; i > 0; i--)
         {
             uint8_t data = 0;
-            if ( mainFlag )    data |= (pgm_read_byte(buf) << offset);
-            if ( complexFlag ) data |= (pgm_read_byte(buf - origin_width) >> (8 - offset));
+            if ( mainFlag )    data |= (lcd_pgmReadByte(buf) << offset);
+            if ( complexFlag ) data |= (lcd_pgmReadByte(buf - origin_width) >> (8 - offset));
             buf++;
             ssd1306_lcd.send_pixels1(s_ssd1306_invertByte^data);
         }
@@ -628,7 +628,7 @@ void NanoDisplayOps<O, I>::printFixedPgm(lcdint_t xpos, lcdint_t y, const char *
     this->m_cursorY = y;
     for ( ;; )
     {
-        char c = pgm_read_byte(ch);
+        char c = lcd_pgmReadByte(ch);
         if ( !c )
             break;
         this->write(c);

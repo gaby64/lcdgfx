@@ -26,8 +26,7 @@
 
 #if defined(PICO_BOARD)
 
-void lcd_gpioMode(int pin, int mode)
-{
+void lcd_gpioMode(int pin, int mode) {
     if(pin < 0)
         return;
     
@@ -50,21 +49,23 @@ void lcd_gpioMode(int pin, int mode)
     }
 }
 
-void lcd_gpioWrite(int pin, int level)
-{
+void lcd_gpioWrite(int pin, int level) {
     if (pin < 0)
         return;
     gpio_put(pin, level==LCD_HIGH);
 }
 
-void lcd_delay(unsigned long ms)
-{
-    sleep_ms(ms);
+void lcd_registerGpioEvent(int pin, gpio_irq_callback_t on_pin_change, void *arg) {
+    gpio_set_irq_enabled_with_callback(pin, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, on_pin_change);
+}
+
+void lcd_unregisterGpioEvent(int pin) {
+    gpio_set_irq_enabled(pin, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, false);
 }
 
 uint8_t lcd_pgmReadByte(const void *ptr)
 {
-    return *(static_cast<const uint8_t *>(ptr));
+    return *((const uint8_t *)ptr);
 }
 
 #endif
